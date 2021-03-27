@@ -24,14 +24,16 @@ func New() *Server {
 	s := &Server{}
 	app := fiber.New()
 
-	app.Use("/api/ws", func(c *fiber.Ctx) error {
+	app.Use("/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			return c.Next()
 		}
 		return fiber.ErrUpgradeRequired
 	})
 
-	app.Get("/api/ws", websocket.New(s.handleWS))
+	app.Get("/ws", websocket.New(s.handleWS))
+
+	s.handleAPI(app.Group("/api"))
 
 	s.app = app
 	return s

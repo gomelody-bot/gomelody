@@ -17,16 +17,23 @@ func main() {
 	cfg := config.LoadConfig()
 	initializeLogger(cfg.Dev)
 
-	sentry.Init(sentry.ClientOptions{
+	err := sentry.Init(sentry.ClientOptions{
 		Dsn: cfg.SentryDsn,
 	})
+	if err != nil {
+		zap.L().Error("failed to initialize sentry", zap.Error(err))
+	}
 
 	b, err := bot.New(cfg.DiscordToken)
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Fatal("failed initializing bot", zap.Error(err))
 	}
-	b.Start()
+	err = b.Start()
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Fatal("failed to connect to to Discord", zap.Error(err))
+	}
 
 	s := server.New()
 	go s.Start(cfg.BindAddress)
@@ -36,14 +43,16 @@ func main() {
 	<-stop
 	zap.L().Info("shutdown...")
 
-	b.Stop()
+	err = b.Stop()
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Fatal("failed to close connection", zap.Error(err))
+	}
 }
 
 func initializeLogger(dev bool) {
-	var (
-		l   *zap.Logger
-		err error
-	)
+	var l *zap.Logger
+	var err error
 	if dev {
 		l, err = zap.NewDevelopment()
 	} else {
