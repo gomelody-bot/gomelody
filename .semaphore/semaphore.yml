@@ -31,4 +31,4 @@ blocks:
             - checkout
             - cache restore binary
             - 'docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'
-            - 'docker push gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker push ghcr.io/gomelody-bot/gomelody:$SEMAPHORE_WORKFLOW_ID'
