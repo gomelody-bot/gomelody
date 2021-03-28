@@ -20,5 +20,4 @@ func Initialize(dev bool) {
 		return
 	}
 	zap.ReplaceGlobals(l)
-	// Co
 }
