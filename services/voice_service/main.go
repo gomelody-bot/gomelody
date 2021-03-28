@@ -5,7 +5,9 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gomelody-bot/gomelody/pkg/logger"
+	"github.com/jonas747/dca"
 	"go.uber.org/zap"
+	"io"
 	"os"
 	"os/signal"
 )
@@ -20,6 +22,21 @@ func main() {
 	})
 	if err != nil {
 		zap.L().Error("failed to initialize sentry", zap.Error(err))
+	}
+
+	encodeSession, err := dca.EncodeFile("test.mp3", dca.StdEncodeOptions)
+	if err != nil {
+		zap.L().Fatal("failed to encode file", zap.Error(err))
+	}
+	defer encodeSession.Cleanup()
+
+	output, err := os.Create("output.dca")
+	if err != nil {
+		zap.L().Fatal("failed to create file", zap.Error(err))
+	}
+	_, err = io.Copy(output, encodeSession)
+	if err != nil {
+		zap.L().Fatal("failed to write file", zap.Error(err))
 	}
 
 	// Start WebServer
