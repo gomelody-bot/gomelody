@@ -22,7 +22,7 @@ blocks:
     dependencies:
       - Get Dependencies
     run:
-      when: "change_in(['/services/api_service', '/pkg'])"
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       jobs:
         - name: go build
@@ -38,7 +38,7 @@ blocks:
     dependencies:
       - Build Api Service
     run:
-      when: "change_in(['/services/api_service', '/pkg'])"
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       secrets:
         - name: github-package-token
@@ -57,7 +57,7 @@ blocks:
     dependencies:
       - Get Dependencies
     run:
-      when: "change_in(['/services/gateway_service', '/pkg'])"
+      when: "change_in(['/services/gateway_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       jobs:
         - name: go build
@@ -73,7 +73,7 @@ blocks:
     dependencies:
       - Build Gateway Service
     run:
-      when: "change_in(['/services/gateway_service', '/pkg'])"
+      when: "change_in(['/services/gateway_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       secrets:
         - name: github-package-token
@@ -92,7 +92,7 @@ blocks:
     dependencies:
       - Get Dependencies
     run:
-      when: "change_in(['/services/voice_service', '/pkg'])"
+      when: "change_in(['/services/voice_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       jobs:
         - name: go build
@@ -108,7 +108,7 @@ blocks:
     dependencies:
       - Build Voice Service
     run:
-      when: "change_in(['/services/voice_service', '/pkg'])"
+      when: "change_in(['/services/voice_service', '/pkg'], {branch_range: SEMAPHORE_GIT_COMMIT_RANGE})"
     task:
       secrets:
         - name: github-package-token
