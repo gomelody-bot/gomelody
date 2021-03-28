@@ -1,0 +1,137 @@
+version: v1.0
+name: Go
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Get Dependencies
+    dependencies: []
+    task:
+      jobs:
+        - name: get go mod dependencies
+          commands:
+            - sem-version go 1.16
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - checkout
+            - go mod download
+            - cache store
+  - name: Build Api Service
+    dependencies:
+      - Get Dependencies
+    run:
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      jobs:
+        - name: go build
+          commands:
+            - cache restore
+            - sem-version go 1.16
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - checkout
+            - go build -a -installsuffix cgo -o services/api_service/api github.com/gomelody-bot/gomelody/services/api_service/
+            - cache store binary-api services/api_service/api
+  - name: Build Api-Service Docker Image
+    dependencies:
+      - Build Api Service
+    run:
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      secrets:
+        - name: github-package-token
+      env_vars:
+        - name: USERNAME
+          value: niggelgame
+      jobs:
+        - name: docker build
+          commands:
+            - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
+            - checkout
+            - cache restore binary-api
+            - 'docker build -t ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID services/api_service/'
+            - 'docker push ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID'
+  - name: Build Gateway Service
+    dependencies:
+      - Get Dependencies
+    run:
+      when: "change_in(['/services/gateway_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      jobs:
+        - name: go build
+          commands:
+            - cache restore
+            - sem-version go 1.16
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - checkout
+            - go build -a -installsuffix cgo -o services/gateway_service/gateway github.com/gomelody-bot/gomelody/services/gateway_service/
+            - cache store binary-gateway services/gateway_service/gateway
+  - name: Build Gateway-Service Docker Image
+    dependencies:
+      - Build Gateway Service
+    run:
+      when: "change_in(['/services/gateway_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      secrets:
+        - name: github-package-token
+      env_vars:
+        - name: USERNAME
+          value: niggelgame
+      jobs:
+        - name: docker build
+          commands:
+            - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
+            - checkout
+            - cache restore binary-gateway
+            - 'docker build -t ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID services/gateway_service/'
+            - 'docker push ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID'
+  - name: Build Voice Service
+    dependencies:
+      - Get Dependencies
+    run:
+      when: "change_in(['/services/voice_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      jobs:
+        - name: go build
+          commands:
+            - cache restore
+            - sem-version go 1.16
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - checkout
+            - go build -a -installsuffix cgo -o services/voice_service/voice github.com/gomelody-bot/gomelody/services/voice_service/
+            - cache store binary-voice services/voice_service/voice
+  - name: Build Voice-Service Docker Image
+    dependencies:
+      - Build Voice Service
+    run:
+      when: "change_in(['/services/voice_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      secrets:
+        - name: github-package-token
+      env_vars:
+        - name: USERNAME
+          value: niggelgame
+      jobs:
+        - name: docker build
+          commands:
+            - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
+            - checkout
+            - cache restore binary-voice
+            - 'docker build -t ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
+            - 'docker push ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID'
+promotions:
+  - name: Deploy Api-Service
+    pipeline_file: api-prod.yml
+    auto_promote:
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/api_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
+  - name: Deploy Gateway-Service
+    pipeline_file: gateway-prod.yml
+    auto_promote:
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/gateway_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
+  - name: Deploy Voice-Service
+    pipeline_file: voice-prod.yml
+    auto_promote:
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/voice_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'

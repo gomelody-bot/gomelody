@@ -1,0 +1,14 @@
+version: v1.0
+name: Gateway Production
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Echo
+    dependencies: []
+    task:
+      jobs:
+        - name: echo
+          commands:
+            - echo Gateway Production

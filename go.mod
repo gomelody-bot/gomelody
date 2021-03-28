@@ -10,7 +10,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.6.0
 	github.com/gofiber/websocket/v2 v2.0.3
 	github.com/golang/protobuf v1.5.1 // indirect
-	github.com/hepsiburada/fiber-prometheus v0.1.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/compress v1.11.13 // indirect
