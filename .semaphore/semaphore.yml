@@ -20,7 +20,7 @@ blocks:
   - name: Build Api Service
     dependencies: ["Get Dependencies"]
     run:
-      when: "change_in('services/api_service/', 'pkg/')"
+      when: "change_in('/pkg/')"
     task:
       jobs:
         - name: go build
