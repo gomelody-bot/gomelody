@@ -37,8 +37,6 @@ blocks:
   - name: Build Api-Service Docker Image
     dependencies:
       - Build Api Service
-    run:
-      when: "change_in(['/services/api_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
     task:
       secrets:
         - name: github-package-token
@@ -72,8 +70,6 @@ blocks:
   - name: Build Gateway-Service Docker Image
     dependencies:
       - Build Gateway Service
-    run:
-      when: "change_in(['/services/gateway_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
     task:
       secrets:
         - name: github-package-token
@@ -107,8 +103,6 @@ blocks:
   - name: Build Voice-Service Docker Image
     dependencies:
       - Build Voice Service
-    run:
-      when: "change_in(['/services/voice_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
     task:
       secrets:
         - name: github-package-token
