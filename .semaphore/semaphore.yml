@@ -17,12 +17,11 @@ blocks:
             - checkout
             - go mod download
             - cache store
-            - echo $SEMAPHORE_GIT_COMMIT_RANGE
   - name: Build Api Service
     dependencies:
       - Get Dependencies
     run:
-      when: "change_in(['/services/api_service', '/pkg'], {branch_range: 'asdasdkjdhakjsdhajkshdkjashdjkashdkjahsjd'})"
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
     task:
       jobs:
         - name: go build
