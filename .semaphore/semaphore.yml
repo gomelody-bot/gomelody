@@ -18,9 +18,10 @@ blocks:
             - go mod download
             - cache store
   - name: Build Api Service
-    dependencies: ["Get Dependencies"]
+    dependencies:
+      - Get Dependencies
     run:
-      when: "change_in(['/services/api_service/', '/pkg/'])"
+      when: 'change_in([''/services/api_service/'', ''/pkg/''])'
     task:
       jobs:
         - name: go build
@@ -33,9 +34,10 @@ blocks:
             - go build -a -installsuffix cgo -o services/api_service/api github.com/gomelody-bot/gomelody/services/api_service/
             - cache store binary-api services/api_service/api
   - name: Build Api-Service Docker Image
-    dependencies: ["Build Api Service"]
+    dependencies:
+      - Build Api Service
     run:
-      when: "change_in(['/services/api_service/', '/pkg/'])"
+      when: 'change_in([''/services/api_service/'', ''/pkg/''])'
     task:
       secrets:
         - name: github-package-token
@@ -51,9 +53,10 @@ blocks:
             - 'docker build -t ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID services/api_service/'
             - 'docker push ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Gateway Service
-    dependencies: ["Get Dependencies"]
+    dependencies:
+      - Get Dependencies
     run:
-      when: "[change_in('/services/gateway_service/', '/pkg/'])"
+      when: '[change_in(''/services/gateway_service/'', ''/pkg/''])'
     task:
       jobs:
         - name: go build
@@ -66,9 +69,10 @@ blocks:
             - go build -a -installsuffix cgo -o services/gateway_service/gateway github.com/gomelody-bot/gomelody/services/gateway_service/
             - cache store binary-gateway services/gateway_service/gateway
   - name: Build Gateway-Service Docker Image
-    dependencies: ["Build Gateway Service"]
+    dependencies:
+      - Build Gateway Service
     run:
-      when: "change_in(['/services/gateway_service/', '/pkg/'])"
+      when: 'change_in([''/services/gateway_service/'', ''/pkg/''])'
     task:
       secrets:
         - name: github-package-token
@@ -84,9 +88,10 @@ blocks:
             - 'docker build -t ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID services/gateway_service/'
             - 'docker push ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Voice Service
-    dependencies: ["Get Dependencies"]
+    dependencies:
+      - Get Dependencies
     run:
-      when: "change_in(['/services/voice_service/', '/pkg/'])"
+      when: 'change_in([''/services/voice_service/'', ''/pkg/''])'
     task:
       jobs:
         - name: go build
@@ -99,9 +104,10 @@ blocks:
             - go build -a -installsuffix cgo -o services/voice_service/voice github.com/gomelody-bot/gomelody/services/voice_service/
             - cache store binary-voice services/voice_service/voice
   - name: Build Voice-Service Docker Image
-    dependencies: ["Build Voice Service"]
+    dependencies:
+      - Build Voice Service
     run:
-      when: "change_in(['/services/voice_service/', '/pkg/'])"
+      when: 'change_in([''/services/voice_service/'', ''/pkg/''])'
     task:
       secrets:
         - name: github-package-token
@@ -116,18 +122,16 @@ blocks:
             - cache restore binary-voice
             - 'docker build -t ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
             - 'docker push ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID'
-
-
 promotions:
   - name: Deploy Api-Service
     pipeline_file: api-prod.yml
     auto_promote:
-      when: "branch = 'master' and result = 'passed' and change_in('/services/api_service/', '/pkg/')"
+      when: 'branch = ''master'' and result = ''passed'' and change_in(''/services/api_service/'', ''/pkg/'')'
   - name: Deploy Gateway-Service
     pipeline_file: gateway-prod.yml
     auto_promote:
-      when: "branch = 'master' and result = 'passed' and change_in('/services/gateway_service/', '/pkg/')"
+      when: 'branch = ''master'' and result = ''passed'' and change_in(''/services/gateway_service/'', ''/pkg/'')'
   - name: Deploy Voice-Service
     pipeline_file: voice-prod.yml
     auto_promote:
-      when: "branch = 'master' and result = 'passed' and change_in('/services/voice_service/', '/pkg/')"
+      when: 'branch = ''master'' and result = ''passed'' and change_in(''/services/voice_service/'', ''/pkg/'')'

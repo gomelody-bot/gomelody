@@ -5,7 +5,7 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
-  - name: Echo 
+  - name: Echo
     dependencies: []
     task:
       jobs:
