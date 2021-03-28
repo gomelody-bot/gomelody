@@ -1,4 +1,4 @@
-package bot
+package main
 
 import (
 	"fmt"
@@ -9,10 +9,10 @@ import (
 )
 
 type Bot struct {
-	*discordgo.Session
+	s *discordgo.Session
 }
 
-func New(token string) (*Bot, error) {
+func NewBot(token string) (*Bot, error) {
 	b := &Bot{}
 
 	// Create Discord Session
@@ -25,16 +25,16 @@ func New(token string) (*Bot, error) {
 	// Add event handlers
 	s.AddHandler(b.ready)
 
-	b.Session = s
+	b.s = s
 	return b, err
 }
 
 func (b *Bot) Start() error {
-	return b.Open()
+	return b.s.Open()
 }
 
 func (b *Bot) Stop() error {
-	return b.Close()
+	return b.s.Close()
 }
 
 func (*Bot) ready(session *discordgo.Session, event *discordgo.Ready) {

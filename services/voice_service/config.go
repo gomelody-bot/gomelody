@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"log"
@@ -17,7 +17,7 @@ type Config struct {
 func LoadConfig() *Config {
 	_ = godotenv.Load()
 	var cfg Config
-	err := envconfig.Process("GOMELODY", &cfg)
+	err := envconfig.Process("VOICE", &cfg)
 	if err != nil {
 		log.Fatal("failed loading config: ", err)
 	}
