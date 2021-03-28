@@ -50,5 +50,11 @@ func main() {
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	zap.L().Info("shutdown...")
+	zap.L().Info("shutdown initialized...")
+
+	err = b.Stop()
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Fatal("failed to stop bot gracefully", zap.Error(err))
+	}
 }
