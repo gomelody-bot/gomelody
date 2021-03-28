@@ -22,5 +22,4 @@ blocks:
       jobs:
         - name: docker build
           commands:
-            - cache restore binary
-            - 'docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'
+            - 'checkout - cache restore binary - ''docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'''
