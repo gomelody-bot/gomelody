@@ -122,6 +122,41 @@ blocks:
             - cache restore binary-voice
             - 'docker build -t ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
             - 'docker push ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID'
+  - name: Build Encoder Service
+    dependencies:
+      - Get Dependencies
+    run:
+      when: "change_in(['/services/encoder_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      jobs:
+        - name: go build
+          commands:
+            - cache restore
+            - sem-version go 1.16
+            - export GOPATH=~/go
+            - 'export PATH=/home/semaphore/go/bin:$PATH'
+            - checkout
+            - go build -a -installsuffix cgo -o services/encoder_service/encoder github.com/gomelody-bot/gomelody/services/encoder_service/
+            - cache store binary-encoder services/encoder_service/encoder
+  - name: Build Encoder-Service Docker Image
+    dependencies:
+      - Build Encoder Service
+    run:
+      when: "change_in(['/services/encoder_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+    task:
+      secrets:
+        - name: github-package-token
+      env_vars:
+        - name: USERNAME
+          value: niggelgame
+      jobs:
+        - name: docker build
+          commands:
+            - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
+            - checkout
+            - cache restore binary-encoder
+            - 'docker build -t ghcr.io/gomelody-bot/encoder:$SEMAPHORE_WORKFLOW_ID services/encoder_service/'
+            - 'docker push ghcr.io/gomelody-bot/encoder:$SEMAPHORE_WORKFLOW_ID'
 promotions:
   - name: Deploy Api-Service
     pipeline_file: api-prod.yml
@@ -135,3 +170,7 @@ promotions:
     pipeline_file: voice-prod.yml
     auto_promote:
       when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/voice_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
+  - name: Deploy Encoder-Service
+    pipeline_file: encoder-prod.yml
+    auto_promote:
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/encoder_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
