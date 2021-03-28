@@ -11,7 +11,7 @@ import (
 	"os/signal"
 )
 
-// Only a change in the gateway-service 4
+// Only a change in the gateway-service 5
 
 func main() {
 	cfg := LoadConfig()
