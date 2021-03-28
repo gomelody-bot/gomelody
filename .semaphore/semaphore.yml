@@ -127,7 +127,7 @@ promotions:
     pipeline_file: gateway-prod.yml
     auto_promote:
       when: "branch = 'master' and result = 'passed' and change_in('/services/gateway_service/', '/pkg/')"
-  - name: Deploy Api-Service
+  - name: Deploy Voice-Service
     pipeline_file: voice-prod.yml
     auto_promote:
       when: "branch = 'master' and result = 'passed' and change_in('/services/voice_service/', '/pkg/')"
