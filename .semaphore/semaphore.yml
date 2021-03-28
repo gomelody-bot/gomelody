@@ -48,6 +48,8 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-api
+            - ls
+            - pwd
             - 'docker build -t ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID /services/api_service/'
             - 'docker push ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Gateway Service
