@@ -98,7 +98,7 @@ blocks:
             - checkout
             - go build -a -installsuffix cgo -o /services/voice_service/voice -v services/voice_service/main.go
             - cache store binary-voice /services/voice_service/voice
-  - name: Build Gateway-Service Docker Image
+  - name: Build Voice-Service Docker Image
     dependencies: ["Build Voice Service"]
     run:
       when: "change_in('/services/voice_service/', '/pkg/')"
