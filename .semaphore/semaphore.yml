@@ -19,7 +19,16 @@ blocks:
             - cache store binary main
   - name: Build Docker Image
     task:
+      secrets:
+        - name: github-package-token
+      env_vars:
+        - name: USERNAME
+          value: niggelgame
       jobs:
         - name: docker build
           commands:
-            - 'checkout - cache restore binary - ''docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'''
+            - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
+            - checkout
+            - cache restore binary
+            - 'docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'
+            - 'docker push gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID'
