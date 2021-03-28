@@ -11,6 +11,8 @@ import (
 	"os/signal"
 )
 
+// Trigger CD
+
 func main() {
 	cfg := LoadConfig()
 	logger.Initialize(cfg.Dev)
