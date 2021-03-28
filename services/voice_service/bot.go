@@ -37,6 +37,6 @@ func (b *Bot) Stop() error {
 	return b.s.Close()
 }
 
-func (*Bot) ready(session *discordgo.Session, event *discordgo.Ready) {
+func (*Bot) ready(s *discordgo.Session, event *discordgo.Ready) {
 	zap.L().Info("bot is ready", zap.Int("guilds", len(event.Guilds)))
 }
