@@ -1,11 +1,16 @@
-package server
+package main
 
 import (
 	"github.com/gofiber/websocket/v2"
 	"go.uber.org/zap"
 )
 
-func (s *Server) handleWS(c *websocket.Conn) {
+type Message struct {
+	OP   string      `json:"op"`
+	Data interface{} `json:"d"`
+}
+
+func handleWS(c *websocket.Conn) {
 	zap.L().Info("New Connection", zap.String("ip", c.RemoteAddr().String()))
 	for {
 		var msg Message
@@ -15,14 +20,10 @@ func (s *Server) handleWS(c *websocket.Conn) {
 			return
 		}
 
-		switch msg.Op {
-		case "play_sound":
-			d, ok := msg.Data.(*PlaySoundRequest)
-			if !ok {
-				zap.L().Error("invalid play_sound")
-				break
-			}
-			zap.L().Info("Play sound", zap.String("sound", d.Sound))
+		switch msg.OP {
+		case "xyz":
+			// call xyz
+			break
 		}
 	}
 }
