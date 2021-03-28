@@ -22,7 +22,7 @@ blocks:
     dependencies:
       - Get Dependencies
     run:
-      when: "change_in(['/services/api_service', '/pkg'], {branch_range: '$SEMAPHORE_GIT_COMMIT_RANGE'})"
+      when: "change_in(['/services/api_service', '/pkg'], {branch_range: 'asdasdkjdhakjsdhajkshdkjashdjkashdkjahsjd'})"
     task:
       jobs:
         - name: go build
