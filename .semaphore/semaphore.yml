@@ -20,7 +20,7 @@ blocks:
   - name: Build Api Service
     dependencies: ["Get Dependencies"]
     run:
-      when: "change_in('/services/api_service/', '/pkg/')"
+      when: "change_in('services/api_service/', 'pkg/')"
     task:
       jobs:
         - name: go build
@@ -48,8 +48,8 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-api
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID services/api_service/'
-            - 'docker push ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker build -t ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID services/api_service/'
+            - 'docker push ghcr.io/gomelody-bot/api:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Gateway Service
     dependencies: ["Get Dependencies"]
     # run:
@@ -81,8 +81,8 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-gateway
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID services/gateway_service/'
-            - 'docker push ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker build -t ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID services/gateway_service/'
+            - 'docker push ghcr.io/gomelody-bot/gateway:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Voice Service
     dependencies: ["Get Dependencies"]
     # run:
@@ -114,8 +114,8 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-voice
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
-            - 'docker push ghcr.io/gomelody-bot/gomelody-voice:$SEMAPHORE_WORKFLOW_ID'
+            - 'docker build -t ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
+            - 'docker push ghcr.io/gomelody-bot/voice:$SEMAPHORE_WORKFLOW_ID'
 
 
 promotions:
