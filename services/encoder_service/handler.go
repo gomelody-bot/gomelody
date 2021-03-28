@@ -32,7 +32,16 @@ func NewConnectionHandler(min *minio.Client) *ConnectionHandler {
 }
 
 func (h *ConnectionHandler) handleConnection(c net.Conn) {
-	s, err := dca.EncodeMem(bufio.NewReader(c), dca.StdEncodeOptions)
+	r := bufio.NewReader(c)
+	b, err := r.ReadBytes('\n')
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Error("failed to read filename", zap.Error(err))
+		return
+	}
+	fmt.Println(string(b))
+
+	s, err := dca.EncodeMem(r, dca.StdEncodeOptions)
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Error("failed to encode stream", zap.Error(err))
@@ -45,6 +54,7 @@ func (h *ConnectionHandler) handleConnection(c net.Conn) {
 		sentry.CaptureException(err)
 		zap.L().Error("failed to upload file", zap.Error(err))
 	}
+
 	defer ccl()
 	defer s.Cleanup()
 }

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"errors"
 	"github.com/getsentry/sentry-go"
 	"github.com/gofiber/fiber/v2"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 	"io"
+	"mime/multipart"
 	"net"
 )
 
@@ -27,35 +27,61 @@ func (h *APIHandler) handle(r fiber.Router) {
 		if err != nil {
 			sentry.CaptureException(err)
 			zap.L().Error("failed to connect to encoder service", zap.Error(err))
-			return errors.New("internal")
+			return SendError(c, fasthttp.StatusInternalServerError, ErrInternal)
+		}
+		_, err = encoder.Write([]byte("super crazy filename\n"))
+		if err != nil {
+			sentry.CaptureException(err)
+			zap.L().Error("could not send filename", zap.Error(err))
+			return SendError(c, fasthttp.StatusInternalServerError, ErrInternal)
 		}
 
+		// Get file from multipart request
 		fh, err := c.FormFile("file")
 		if err == fasthttp.ErrMissingFile {
-			return c.SendStatus(fasthttp.StatusBadRequest)
+			return SendError(c, fasthttp.StatusBadRequest, "upload/missing-file")
 		} else if err != nil {
 			sentry.CaptureException(err)
 			zap.L().Error("failed to access file", zap.Error(err))
-			return err
+			return SendError(c, fasthttp.StatusInternalServerError, ErrInternal)
 		}
-		f, err := fh.Open()
+
+		// Stream file to encoder service
+		err = streamFile(fh, encoder)
 		if err != nil {
-			sentry.CaptureException(err)
-			zap.L().Error("failed to open file", zap.Error(err))
-			return err
+			_ = SendError(c, fasthttp.StatusInternalServerError, ErrInternal)
 		}
-		_, err = io.Copy(encoder, f)
-		if err != nil {
-			sentry.CaptureException(err)
-			zap.L().Error("failed to send file to encoder", zap.Error(err))
-		}
+
+
+		// Close connection if done
 		defer func() {
 			err := encoder.Close()
 			if err != nil {
 				sentry.CaptureException(err)
 				zap.L().Error("failed to close connection to encoder", zap.Error(err))
+				return
 			}
+			c.SendStatus(200)
 		}()
 		return err
 	})
+}
+
+func streamFile(fh *multipart.FileHeader, c net.Conn) error {
+	// Open file
+	f, err := fh.Open()
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Error("failed to open file", zap.Error(err))
+		return err
+	}
+
+	// Stream to encoder service
+	_, err = io.Copy(c, f)
+	if err != nil {
+		sentry.CaptureException(err)
+		zap.L().Error("failed to send file to encoder", zap.Error(err))
+		return err
+	}
+	return nil
 }

@@ -61,6 +61,7 @@ func main() {
 		}
 	}()
 
+	// Handle TCP Connection
 	go func() {
 		h := NewConnectionHandler(min)
 		for {
@@ -77,5 +78,5 @@ func main() {
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	zap.L().Info("shutdown...")
+	zap.L().Info("shutdown initialized...")
 }
