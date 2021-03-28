@@ -4,4 +4,11 @@ agent:
   machine:
     type: e1-standard-2
     os_image: ubuntu1804
-blocks: []
+blocks:
+  - name: Echo
+    dependencies: []
+    task:
+      jobs:
+        - name: echo
+          commands:
+            - echo Api Production
