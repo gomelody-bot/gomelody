@@ -5,7 +5,7 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
-  - name: Build
+  - name: Build Go Service
     task:
       jobs:
         - name: go build
@@ -15,4 +15,12 @@ blocks:
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go mod download
-            - go build -v cmd/gomelody/main.go
+            - go build -a -installsuffix cgo -o main -v cmd/gomelody/main.go
+            - cache store binary main
+  - name: Build Docker Image
+    task:
+      jobs:
+        - name: docker build
+          commands:
+            - cache restore binary
+            - 'docker build -t gomelody/gomelody:$SEMAPHORE_WORKFLOW_ID .'
