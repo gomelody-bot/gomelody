@@ -11,6 +11,8 @@ import (
 	"os/signal"
 )
 
+// Only a change in the gateway-service
+
 func main() {
 	cfg := LoadConfig()
 	logger.Initialize(cfg.Dev)
