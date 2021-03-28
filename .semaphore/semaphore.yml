@@ -19,8 +19,8 @@ blocks:
             - cache store
   - name: Build Api Service
     dependencies: ["Get Dependencies"]
-    run:
-      when: "change_in('/services/api_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/api_service/', '/pkg/')"
     task:
       jobs:
         - name: go build
@@ -34,8 +34,8 @@ blocks:
             - cache store binary-api /services/api_service/api
   - name: Build Api-Service Docker Image
     dependencies: ["Build Api Service"]
-    run:
-      when: "change_in('/services/api_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/api_service/', '/pkg/')"
     task:
       secrets:
         - name: github-package-token
@@ -52,8 +52,8 @@ blocks:
             - 'docker push ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Gateway Service
     dependencies: ["Get Dependencies"]
-    run:
-      when: "change_in('/services/gateway_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/gateway_service/', '/pkg/')"
     task:
       jobs:
         - name: go build
@@ -67,8 +67,8 @@ blocks:
             - cache store binary-gateway /services/gateway_service/gateway
   - name: Build Gateway-Service Docker Image
     dependencies: ["Build Gateway Service"]
-    run:
-      when: "change_in('/services/gateway_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/gateway_service/', '/pkg/')"
     task:
       secrets:
         - name: github-package-token
@@ -85,8 +85,8 @@ blocks:
             - 'docker push ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Voice Service
     dependencies: ["Get Dependencies"]
-    run:
-      when: "change_in('/services/voice_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/voice_service/', '/pkg/')"
     task:
       jobs:
         - name: go build
@@ -100,8 +100,8 @@ blocks:
             - cache store binary-voice /services/voice_service/voice
   - name: Build Voice-Service Docker Image
     dependencies: ["Build Voice Service"]
-    run:
-      when: "change_in('/services/voice_service/', '/pkg/')"
+    # run:
+    #   when: "change_in('/services/voice_service/', '/pkg/')"
     task:
       secrets:
         - name: github-package-token
