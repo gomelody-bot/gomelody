@@ -27,7 +27,8 @@ func main() {
 	prometheus := fiberprometheus.New("voice_service")
 	prometheus.RegisterAt(app, "/metrics")
 	app.Use(prometheus.Middleware)
-	handleAPI(app.Group("/api"))
+	h := NewAPIHandler(cfg.EncoderService)
+	h.handle(app.Group("/api"))
 	go func() {
 		err := app.Listen(cfg.BindAddress)
 		if err != nil {

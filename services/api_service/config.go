@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	Dev          bool   `default:"false"`
-	BindAddress  string `default:":8002" envconfig:"BIND_ADDRESS"`
-	SentryDsn    string `envconfig:"SENTRY_DSN"`
+	Dev            bool   `default:"false"`
+	BindAddress    string `default:":8002" envconfig:"BIND_ADDRESS"`
+	SentryDsn      string `envconfig:"SENTRY_DSN"`
+	EncoderService string `envconfig:"ENCODER_SERVICE" required:"true"`
 }
 
 func LoadConfig() *Config {
