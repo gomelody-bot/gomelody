@@ -4,6 +4,6 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
-COPY main main
+COPY voice voice
 
-CMD ["./main"]
+CMD ["./voice"]
