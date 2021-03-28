@@ -3,8 +3,8 @@ module github.com/gomelody-bot/gomelody
 go 1.16
 
 require (
-	github.com/ansrivas/fiberprometheus/v2 v2.1.1
-	github.com/bwmarrin/discordgo v0.23.2
+	github.com/ansrivas/fiberprometheus/v2 v2.1.1 // indirect
+	github.com/bwmarrin/discordgo v0.23.3-0.20210327033043-f637c37ba2f0
 	github.com/fasthttp/websocket v1.4.3 // indirect
 	github.com/getsentry/sentry-go v0.10.0
 	github.com/gofiber/fiber/v2 v2.6.0
