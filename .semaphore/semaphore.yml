@@ -31,7 +31,7 @@ blocks:
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go build -a -installsuffix cgo -o services/api_service/api github.com/gomelody-bot/gomelody/services/api_service/
-            - cache store binary-api /services/api_service/api
+            - cache store binary-api services/api_service/api
   - name: Build Api-Service Docker Image
     dependencies: ["Build Api Service"]
     # run:
@@ -50,7 +50,7 @@ blocks:
             - cache restore binary-api
             - ls
             - pwd
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID /services/api_service/'
+            - 'docker build -t ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID services/api_service/'
             - 'docker push ghcr.io/gomelody-bot/gomelody-api:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Gateway Service
     dependencies: ["Get Dependencies"]
@@ -66,7 +66,7 @@ blocks:
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go build -a -installsuffix cgo -o services/gateway_service/gateway github.com/gomelody-bot/gomelody/services/gateway_service/
-            - cache store binary-gateway /services/gateway_service/gateway
+            - cache store binary-gateway services/gateway_service/gateway
   - name: Build Gateway-Service Docker Image
     dependencies: ["Build Gateway Service"]
     # run:
@@ -83,7 +83,7 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-gateway
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID /services/gateway_service/'
+            - 'docker build -t ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID services/gateway_service/'
             - 'docker push ghcr.io/gomelody-bot/gomelody-gateway:$SEMAPHORE_WORKFLOW_ID'
   - name: Build Voice Service
     dependencies: ["Get Dependencies"]
@@ -99,7 +99,7 @@ blocks:
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
             - go build -a -installsuffix cgo -o services/voice_service/voice github.com/gomelody-bot/gomelody/services/voice_service/
-            - cache store binary-voice /services/voice_service/voice
+            - cache store binary-voice services/voice_service/voice
   - name: Build Voice-Service Docker Image
     dependencies: ["Build Voice Service"]
     # run:
@@ -116,7 +116,7 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary-voice
-            - 'docker build -t ghcr.io/gomelody-bot/gomelody-voice:$SEMAPHORE_WORKFLOW_ID /services/voice_service/'
+            - 'docker build -t ghcr.io/gomelody-bot/gomelody-voice:$SEMAPHORE_WORKFLOW_ID services/voice_service/'
             - 'docker push ghcr.io/gomelody-bot/gomelody-voice:$SEMAPHORE_WORKFLOW_ID'
 
 
