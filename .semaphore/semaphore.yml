@@ -126,12 +126,12 @@ promotions:
   - name: Deploy Api-Service
     pipeline_file: api-prod.yml
     auto_promote:
-      when: 'branch = ''master'' and result = ''passed'' and change_in(''/services/api_service/'', ''/pkg/'')'
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/api_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
   - name: Deploy Gateway-Service
     pipeline_file: gateway-prod.yml
     auto_promote:
-      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/gateway_service/'', ''/pkg/''])'
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/gateway_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
   - name: Deploy Voice-Service
     pipeline_file: voice-prod.yml
     auto_promote:
-      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/voice_service/'', ''/pkg/''])'
+      when: 'branch = ''master'' and result = ''passed'' and change_in([''/services/voice_service'', ''/pkg''], {branch_range: ''$SEMAPHORE_GIT_COMMIT_RANGE''})'
