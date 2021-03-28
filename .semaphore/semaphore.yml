@@ -30,5 +30,5 @@ blocks:
             - echo $GP_TOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             - checkout
             - cache restore binary
-            - 'docker build -t gomelody-bot/gomelody:$SEMAPHORE_WORKFLOW_ID .'
+            - 'docker build -t ghcr.io/gomelody-bot/gomelody:$SEMAPHORE_WORKFLOW_ID .'
             - 'docker push ghcr.io/gomelody-bot/gomelody:$SEMAPHORE_WORKFLOW_ID'
