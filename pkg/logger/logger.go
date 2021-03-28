@@ -20,5 +20,4 @@ func Initialize(dev bool) {
 		return
 	}
 	zap.ReplaceGlobals(l)
-	zap.L().Debug("debug", zap.String("debug", "debug6"))
 }
