@@ -19,7 +19,7 @@ func LoadConfig() *Config {
 	var cfg Config
 	err := envconfig.Process("VOICE", &cfg)
 	if err != nil {
-		log.Fatal("failed loading config: ", err)
+		log.Fatal("failed to load voice config: ", err)
 	}
 	return &cfg
 }

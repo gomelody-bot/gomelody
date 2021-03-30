@@ -15,11 +15,11 @@ type Bot struct {
 func NewBot(token string) (*Bot, error) {
 	b := &Bot{}
 
-	// Create Discord Session
+	// Create Discord session
 	s, err := discordgo.New(fmt.Sprintf("Bot %s", token))
 	if err != nil {
 		sentry.CaptureException(err)
-		zap.L().Fatal("failed to create bot", zap.Error(err))
+		zap.L().Fatal("failed to create new Discord session", zap.Error(err))
 	}
 
 	// Add event handlers
@@ -38,5 +38,5 @@ func (b *Bot) Stop() error {
 }
 
 func (*Bot) ready(s *discordgo.Session, event *discordgo.Ready) {
-	zap.L().Info("bot is ready", zap.Int("guilds", len(event.Guilds)))
+	zap.L().Info("successfully received ready event", zap.Int("guilds", len(event.Guilds)))
 }

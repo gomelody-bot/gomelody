@@ -16,7 +16,7 @@ func main() {
 	cfg := LoadConfig()
 	logger.Initialize(cfg.Dev)
 
-	// Initialize Sentry
+	// Initialize sentry
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: cfg.SentryDsn,
 	})
@@ -24,12 +24,12 @@ func main() {
 		zap.L().Error("failed to initialize sentry", zap.Error(err))
 	}
 
+	// TODO: remove debug operations
 	encodeSession, err := dca.EncodeFile("test.mp3", dca.StdEncodeOptions)
 	if err != nil {
 		zap.L().Fatal("failed to encode file", zap.Error(err))
 	}
 	defer encodeSession.Cleanup()
-
 	output, err := os.Create("output.dca")
 	if err != nil {
 		zap.L().Fatal("failed to create file", zap.Error(err))
@@ -39,11 +39,15 @@ func main() {
 		zap.L().Fatal("failed to write file", zap.Error(err))
 	}
 
-	// Start WebServer
+	// Create new fiber webserver
 	app := fiber.New()
+
+	// Register metrics endpoint for prometheus scraping
 	prometheus := fiberprometheus.New("voice_service")
 	prometheus.RegisterAt(app, "/metrics")
 	app.Use(prometheus.Middleware)
+
+	// Start fiber server in separate goroutine
 	go func() {
 		err := app.Listen(cfg.BindAddress)
 		if err != nil {
@@ -52,22 +56,25 @@ func main() {
 		}
 	}()
 
-	// Start Bot
+	// Create new bot instance
 	b, err := NewBot(cfg.DiscordToken)
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Fatal("failed to create bot", zap.Error(err))
 	}
+
+	// Start bot instance
 	err = b.Start()
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Fatal("failed to serve bot", zap.Error(err))
 	}
 
+	// Await interruption signal in order to gracefully shutdown webserver
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	zap.L().Info("shutdown initialized...")
+	zap.L().Info("shutting down...")
 
 	err = b.Stop()
 	if err != nil {
