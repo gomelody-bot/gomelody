@@ -43,6 +43,15 @@ func main() {
 		}
 	}()
 
+	// Defer shutting down of fiber server
+	defer func() {
+		// Try to gracefully shutdown webserver
+		err = app.Shutdown()
+		if err != nil {
+			zap.L().Fatal("failed to gracefully shutdown webserver", zap.Error(err))
+		}
+	}()
+
 	// Await interruption signal in order to gracefully shutdown webserver
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
