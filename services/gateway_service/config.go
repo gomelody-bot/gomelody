@@ -18,7 +18,7 @@ func LoadConfig() *Config {
 	var cfg Config
 	err := envconfig.Process("GATEWAY", &cfg)
 	if err != nil {
-		log.Fatal("failed loading config: ", err)
+		log.Fatal("failed to load gateway config: ", err)
 	}
 	return &cfg
 }

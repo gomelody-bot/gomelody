@@ -11,12 +11,13 @@ type Message struct {
 }
 
 func handleWS(c *websocket.Conn) {
+	// TODO: remove debug log
 	zap.L().Info("New Connection", zap.String("ip", c.RemoteAddr().String()))
 	for {
 		var msg Message
 		err := c.ReadJSON(&msg)
 		if err != nil {
-			zap.L().Error("failed parsing data", zap.Error(err))
+			zap.L().Error("failed to parse websocket message", zap.Error(err))
 			return
 		}
 
