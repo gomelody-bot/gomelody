@@ -1,0 +1,73 @@
+syntax = "proto3";
+option go_package = "pkg/proto";
+
+message DeviceData {
+  enum Type {
+    UNKNOWN = 0;
+    APP = 1;
+    WEB = 2;
+  }
+
+  string name = 1;
+  string os = 2;
+  Type type = 3;
+  string location = 4;
+}
+
+message SessionData {
+  string device_id = 1;
+  DeviceData device_data = 2;
+}
+
+message CreateSessionRequest {
+  uint64 user_id = 1;
+  string device_id = 2;
+  DeviceData device_data = 3;
+}
+
+message CreateSessionResponse {
+  string access_token = 1;
+  // Refresh token won't expire but will contain claim about creation date
+  string refresh_token = 2;
+  uint64 expires_at = 3;
+}
+
+message GetSessionsRequest {
+  string access_token = 1;
+}
+
+message GetSessionsResponse {
+  repeated SessionData session_data = 1;
+}
+
+message DeleteSessionRequest {
+  uint64 user_id = 1;
+  string device_id = 2;
+  string access_token = 3;
+}
+
+message DeleteSessionResponse {}
+
+message RefreshSessionRequest {
+  // Only required refresh token since it'll contain the session id as a claim
+  string refresh_token = 1;
+}
+
+message RefreshSessionResponse {
+  string access_token = 1;
+  uint64 expires_at = 2;
+}
+
+message VerifySessionRequest {
+  string access_token = 1;
+}
+
+message VerifySessionResponse {}
+
+service SessionService {
+  rpc CreateSession (CreateSessionRequest) returns (CreateSessionResponse) {}
+  rpc DeleteSession (DeleteSessionRequest) returns (DeleteSessionResponse) {}
+  rpc RefreshSession (RefreshSessionRequest) returns (RefreshSessionResponse) {}
+  rpc VerifySession (VerifySessionRequest) returns (VerifySessionResponse) {}
+  rpc GetSessions (GetSessionsRequest) returns (GetSessionsResponse) {}
+}
