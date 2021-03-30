@@ -14,8 +14,8 @@ import (
 )
 
 type ConnectionHandler struct {
-	idGen *snowflake.Node
-	min   *minio.Client
+	gen *snowflake.Node
+	min *minio.Client
 }
 
 func NewConnectionHandler(min *minio.Client) *ConnectionHandler {
@@ -25,22 +25,27 @@ func NewConnectionHandler(min *minio.Client) *ConnectionHandler {
 		zap.L().Fatal("failed to initialize snowflake node", zap.Error(err))
 	}
 	h := &ConnectionHandler{
-		idGen: node,
-		min:   min,
+		gen: node,
+		min: min,
 	}
 	return h
 }
 
 func (h *ConnectionHandler) handleConnection(c net.Conn) {
 	r := bufio.NewReader(c)
+
+	// Read filename from byte array until delimiter
 	b, err := r.ReadBytes('\n')
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Error("failed to read filename", zap.Error(err))
 		return
 	}
+
+	// TODO: remove debug log
 	fmt.Println(string(b))
 
+	// Initialize encoding session for file upload
 	s, err := dca.EncodeMem(r, dca.StdEncodeOptions)
 	if err != nil {
 		sentry.CaptureException(err)
@@ -48,13 +53,17 @@ func (h *ConnectionHandler) handleConnection(c net.Conn) {
 		return
 	}
 
+	// Initialize file upload to minio
 	ctx, ccl := context.WithTimeout(context.Background(), 10*time.Second)
-	_, err = h.min.PutObject(ctx, "audio-files", fmt.Sprintf("%s.dca", h.idGen.Generate().String()), s, -1, minio.PutObjectOptions{ContentType: "dca"})
+	_, err = h.min.PutObject(ctx, "audio-files", fmt.Sprintf("%s.dca", h.gen.Generate().String()), s, -1, minio.PutObjectOptions{ContentType: "dca"})
 	if err != nil {
 		sentry.CaptureException(err)
-		zap.L().Error("failed to upload file", zap.Error(err))
+		zap.L().Error("failed to upload file to minio", zap.Error(err))
 	}
 
+	// Cancel context in order to release its associated resources
 	defer ccl()
+
+	// Clean up encoding session
 	defer s.Cleanup()
 }

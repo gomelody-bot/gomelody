@@ -22,7 +22,7 @@ func LoadConfig() *Config {
 	var cfg Config
 	err := envconfig.Process("ENCODER", &cfg)
 	if err != nil {
-		log.Fatal("failed loading config: ", err)
+		log.Fatal("failed to encoder config: ", err)
 	}
 	return &cfg
 }
