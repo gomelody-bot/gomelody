@@ -17,7 +17,7 @@ func main() {
 	cfg := LoadConfig()
 	logger.Initialize(cfg.Dev)
 
-	// Initialize Sentry
+	// Initialize sentry
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: cfg.SentryDsn,
 	})
@@ -25,20 +25,24 @@ func main() {
 		zap.L().Error("failed to initialize sentry", zap.Error(err))
 	}
 
-	// Initialize MinIO
+	// Initialize new minio client
 	min, err := minio.New(cfg.MinioHost, &minio.Options{
 		Creds: credentials.NewStaticV4(cfg.MinioAccessKey, cfg.MinioSecretKey, ""),
 	})
 	if err != nil {
 		sentry.CaptureException(err)
-		zap.L().Fatal("failed to connect to MinIO", zap.Error(err))
+		zap.L().Fatal("failed to connect to minio", zap.Error(err))
 	}
 
-	// Start WebServer
+	// Create new fiber webserver
 	app := fiber.New()
+
+	// Register metrics endpoint for prometheus scraping
 	prometheus := fiberprometheus.New("voice_service")
 	prometheus.RegisterAt(app, "/metrics")
 	app.Use(prometheus.Middleware)
+
+	// Start fiber server in separate goroutine
 	go func() {
 		err := app.Listen(cfg.WebAddress)
 		if err != nil {
@@ -47,12 +51,23 @@ func main() {
 		}
 	}()
 
-	// Start TCP Server
+	// Defer shutting down of fiber server
+	defer func() {
+		// Try to gracefully shutdown webserver
+		err = app.Shutdown()
+		if err != nil {
+			zap.L().Fatal("failed to gracefully shutdown webserver", zap.Error(err))
+		}
+	}()
+
+	// Start TCP server
 	l, err := net.Listen("tcp", cfg.BindAddress)
 	if err != nil {
 		sentry.CaptureException(err)
 		zap.L().Error("failed to start tcp server", zap.Error(err))
 	}
+
+	// Defer closing of connection after receiving shutdown
 	defer func() {
 		err := l.Close()
 		if err != nil {
@@ -61,7 +76,7 @@ func main() {
 		}
 	}()
 
-	// Handle TCP Connection
+	// Launch new connection handler in separate goroutine
 	go func() {
 		h := NewConnectionHandler(min)
 		for {
@@ -78,5 +93,5 @@ func main() {
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	zap.L().Info("shutdown initialized...")
+	zap.L().Info("shutting down...")
 }
