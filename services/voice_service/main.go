@@ -49,7 +49,7 @@ func main() {
 
 	// Start fiber server in separate goroutine
 	go func() {
-		err := app.Listen(cfg.BindAddress)
+		err := app.Listen(cfg.WebAddress)
 		if err != nil {
 			sentry.CaptureException(err)
 			zap.L().Fatal("failed to serve fiber", zap.Error(err))

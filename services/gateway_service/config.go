@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Dev          bool   `default:"false"`
-	BindAddress  string `default:":8001" envconfig:"BIND_ADDRESS"`
+	WebAddress  string `default:":8010" envconfig:"WEB_ADDRESS"`
 	SentryDsn    string `envconfig:"SENTRY_DSN"`
 }
 

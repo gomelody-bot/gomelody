@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	Dev          bool   `default:"false"`
-	BindAddress  string `default:":8000" envconfig:"BIND_ADDRESS"`
+	WebAddress  string `default:":8000" envconfig:"WEB_ADDRESS"`
 	SentryDsn    string `envconfig:"SENTRY_DSN"`
 	DiscordToken string `required:"true" envconfig:"DISCORD_TOKEN"`
 }
