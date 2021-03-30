@@ -70,15 +70,18 @@ func main() {
 		zap.L().Fatal("failed to serve bot", zap.Error(err))
 	}
 
+	// Defer stopping of bot instance
+	defer func() {
+		err = b.Stop()
+		if err != nil {
+			sentry.CaptureException(err)
+			zap.L().Fatal("failed to stop bot gracefully", zap.Error(err))
+		}
+	}()
+
 	// Await interruption signal in order to gracefully shutdown webserver
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
 	zap.L().Info("shutting down...")
-
-	err = b.Stop()
-	if err != nil {
-		sentry.CaptureException(err)
-		zap.L().Fatal("failed to stop bot gracefully", zap.Error(err))
-	}
 }
