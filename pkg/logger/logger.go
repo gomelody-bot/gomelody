@@ -16,7 +16,7 @@ func Initialize(dev bool) {
 	}
 	if err != nil {
 		sentry.CaptureException(err)
-		log.Fatal("failed creating logger: ", err)
+		log.Fatal("failed to create zap logger: ", err)
 		return
 	}
 	zap.ReplaceGlobals(l)
