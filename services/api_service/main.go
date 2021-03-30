@@ -14,7 +14,7 @@ func main() {
 	cfg := LoadConfig()
 	logger.Initialize(cfg.Dev)
 
-	// Initialize Sentry
+	// Initialize sentry
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: cfg.SentryDsn,
 	})
@@ -22,13 +22,19 @@ func main() {
 		zap.L().Error("failed to initialize sentry", zap.Error(err))
 	}
 
-	// Start WebServer
+	// Create new fiber webserver
 	app := fiber.New()
+
+	// Register metrics endpoint for prometheus scraping
 	prometheus := fiberprometheus.New("voice_service")
 	prometheus.RegisterAt(app, "/metrics")
 	app.Use(prometheus.Middleware)
+
+	// Initialize encoder service API handler
 	h := NewAPIHandler(cfg.EncoderService)
 	h.handle(app.Group("/api"))
+
+	// Start fiber server in separate goroutine
 	go func() {
 		err := app.Listen(cfg.BindAddress)
 		if err != nil {
@@ -37,8 +43,15 @@ func main() {
 		}
 	}()
 
+	// Await interruption signal in order to gracefully shutdown webserver
 	stop := make(chan os.Signal)
 	signal.Notify(stop, os.Interrupt)
 	<-stop
-	zap.L().Info("shutdown...")
+	zap.L().Info("initializing graceful shutdown...")
+
+	// Try to gracefully shutdown webserver
+	err = app.Shutdown()
+	if err != nil {
+		zap.L().Fatal("failed to gracefully shutdown webserver", zap.Error(err))
+	}
 }

@@ -18,15 +18,15 @@ var (
 
 // SendError sends an error message and the according status code to the fiber.Ctx
 func SendError(c *fiber.Ctx, status int, error string) error {
-	// Send Status Code
+	// Set response status code
 	err := c.SendStatus(status)
 	if err != nil {
 		sentry.CaptureException(err)
-		zap.L().Error("failed to send error status", zap.Error(err))
+		zap.L().Error("failed to set response status code", zap.Error(err))
 		return errors.New("internal")
 	}
 
-	// Encode Error Message
+	// Encode error message into error struct
 	b, err := json.Marshal(errorMsg{Error: error})
 	if err != nil {
 		sentry.CaptureException(err)
@@ -34,7 +34,7 @@ func SendError(c *fiber.Ctx, status int, error string) error {
 		return errors.New("internal")
 	}
 
-	// Send Error Message
+	// Write error message to response
 	_, err = c.Write(b)
 	if err != nil {
 		sentry.CaptureException(err)
