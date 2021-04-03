@@ -2,18 +2,48 @@ services:
   minio:
     image: minio/minio
     volumes:
-    - minio-data2:/data
+    - minio_data:/data
     ports:
       - 9000:9000
     environment:
       MINIO_ROOT_USER: gomelody
       MINIO_ROOT_PASSWORD: gomelody
     command: server /mnt/data
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
-      interval: 30s
-      timeout: 20s
-      retries: 3
+
+  redis:
+    image: redis
+    ports:
+    - 6379:6379
+
+  mongo:
+    image: mongo
+    volumes:
+    - mongo_data:/data/db
+    ports:
+    - 27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gomelody
+      MONGO_INITDB_ROOT_PASSWORD: gomelody
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: gomelody
+      ME_CONFIG_MONGODB_ADMINPASSWORD: gomelody
+
+  rabbit:
+    image: rabbitmq:management
+    volumes:
+    - rabbit_data:/var/lib/rabbitmq/
+    ports:
+    - 5672:5672
+    - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_VHOST: gomelody
 
 volumes:
-  minio-data2: {}
+  minio_data: {}
+  mongo_data: {}
+  rabbit_data: {}

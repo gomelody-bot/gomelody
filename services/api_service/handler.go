@@ -21,6 +21,9 @@ func NewAPIHandler(encoderAddress string) *APIHandler {
 }
 
 func (h *APIHandler) handle(r fiber.Router) {
+	// r.Post("/auth/login", handleLogin)
+
+	//TODO: Currently just a debug route
 	r.Post("/upload", func(c *fiber.Ctx) error {
 		// Connect to encoder service
 		encoder, err := net.Dial("tcp", h.encoderAddress)

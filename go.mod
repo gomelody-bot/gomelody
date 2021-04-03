@@ -8,7 +8,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/fasthttp/websocket v1.4.3 // indirect
 	github.com/getsentry/sentry-go v0.10.0
-	github.com/go-redis/redis/v8 v8.8.0 // indirect
+	github.com/go-redis/redis/v8 v8.8.0
 	github.com/gofiber/fiber/v2 v2.6.0
 	github.com/gofiber/websocket/v2 v2.0.3
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -21,7 +21,6 @@ require (
 	github.com/prometheus/client_golang v1.10.0 // indirect
 	github.com/prometheus/common v0.20.0 // indirect
 	github.com/savsgio/gotils v0.0.0-20210316171653-c54912823645 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/valyala/fasthttp v1.22.0
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
