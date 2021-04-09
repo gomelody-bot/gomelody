@@ -31,7 +31,7 @@ blocks:
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
-            - env GOOS=linux go build -a -installsuffix cgo -o services/api_service/api github.com/gomelody-bot/gomelody/services/api_service/
+            - env GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o services/api_service/api github.com/gomelody-bot/gomelody/services/api_service/
             - cache store binary-api services/api_service/api
   - name: Build Api-Service Docker Image - for master branch
     dependencies:
@@ -85,7 +85,7 @@ blocks:
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
-            - env GOOS=linux go build -a -installsuffix cgo -o services/gateway_service/gateway github.com/gomelody-bot/gomelody/services/gateway_service/
+            - env GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o services/gateway_service/gateway github.com/gomelody-bot/gomelody/services/gateway_service/
             - cache store binary-gateway services/gateway_service/gateway
   - name: Build Gateway-Service Docker Image - for master branch
     dependencies:
@@ -139,7 +139,7 @@ blocks:
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
-            - env GOOS=linux go build -a -installsuffix cgo -o services/voice_service/voice github.com/gomelody-bot/gomelody/services/voice_service/
+            - env GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o services/voice_service/voice github.com/gomelody-bot/gomelody/services/voice_service/
             - cache store binary-voice services/voice_service/voice
   - name: Build Voice-Service Docker Image - for master branch
     dependencies:
@@ -193,7 +193,7 @@ blocks:
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
-            - env GOOS=linux go build -a -installsuffix cgo -o services/encoder_service/encoder github.com/gomelody-bot/gomelody/services/encoder_service/
+            - env GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o services/encoder_service/encoder github.com/gomelody-bot/gomelody/services/encoder_service/
             - cache store binary-encoder services/encoder_service/encoder
   - name: Build Encoder-Service Docker Image - for master branch
     dependencies:
@@ -247,7 +247,7 @@ blocks:
             - export GOPATH=~/go
             - 'export PATH=/home/semaphore/go/bin:$PATH'
             - checkout
-            - env GOOS=linux go build -a -installsuffix cgo -o services/session_service/session github.com/gomelody-bot/gomelody/services/session_service/
+            - env GOARCH=amd64 GOOS=linux go build -a -installsuffix cgo -o services/session_service/session github.com/gomelody-bot/gomelody/services/session_service/
             - cache store binary-session services/session_service/session
   - name: Build Session-Service Docker Image - for master branch
     dependencies:
